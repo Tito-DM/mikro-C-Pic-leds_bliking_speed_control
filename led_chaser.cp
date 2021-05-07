@@ -2,7 +2,7 @@
 
 
 
-int count = 1;
+int count = 0;
 
 void delayChanger(unsigned delay ){
  VDelay_ms(delay);
@@ -25,13 +25,17 @@ void main()
 
 do {
 
- if (PORTD.F7 == 0){
- Delay_ms(1);
+ if (Button(&PORTD,7,2,0)){
+ if (Button(&PORTD,7,2,0)){
  count++;
+ Delay_us(50);
  }
+
+ }
+
  switch(count){
  case 1:
- delayChanger( 600 );
+ delayChanger( 800 );
  break;
  case 2 :
  delayChanger( 300 );
@@ -40,7 +44,7 @@ do {
  delayChanger( 100 );
  break;
  default :
- count = 1;
+ count = 0;
  }
 
 

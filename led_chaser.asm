@@ -54,83 +54,89 @@ _main:
 	MOVWF      PORTB+0
 ;led_chaser.c,25 :: 		do {
 L_main1:
-;led_chaser.c,27 :: 		if (PORTD.F7 == 0){
-	BTFSC      PORTD+0, 7
+;led_chaser.c,27 :: 		if (Button(&PORTD,7,2,0)){
+	MOVLW      PORTD+0
+	MOVWF      FARG_Button_port+0
+	MOVLW      7
+	MOVWF      FARG_Button_pin+0
+	MOVLW      2
+	MOVWF      FARG_Button_time_ms+0
+	CLRF       FARG_Button_active_state+0
+	CALL       _Button+0
+	MOVF       R0+0, 0
+	BTFSC      STATUS+0, 2
 	GOTO       L_main4
-;led_chaser.c,28 :: 		Delay_ms(1);  // delay for bouncing
-	MOVLW      3
-	MOVWF      R12+0
-	MOVLW      151
-	MOVWF      R13+0
-L_main5:
-	DECFSZ     R13+0, 1
+;led_chaser.c,28 :: 		if (Button(&PORTD,7,2,0)){
+	MOVLW      PORTD+0
+	MOVWF      FARG_Button_port+0
+	MOVLW      7
+	MOVWF      FARG_Button_pin+0
+	MOVLW      2
+	MOVWF      FARG_Button_time_ms+0
+	CLRF       FARG_Button_active_state+0
+	CALL       _Button+0
+	MOVF       R0+0, 0
+	BTFSC      STATUS+0, 2
 	GOTO       L_main5
-	DECFSZ     R12+0, 1
-	GOTO       L_main5
-	NOP
-	NOP
 ;led_chaser.c,29 :: 		count++;
 	INCF       _count+0, 1
 	BTFSC      STATUS+0, 2
 	INCF       _count+1, 1
-;led_chaser.c,30 :: 		}
-L_main4:
-;led_chaser.c,31 :: 		switch(count){
+;led_chaser.c,30 :: 		Delay_us(50);
+	MOVLW      33
+	MOVWF      R13+0
+L_main6:
+	DECFSZ     R13+0, 1
 	GOTO       L_main6
-;led_chaser.c,32 :: 		case 1:
-L_main8:
-;led_chaser.c,33 :: 		delayChanger(SLOW);
-	MOVLW      88
+;led_chaser.c,31 :: 		}
+L_main5:
+;led_chaser.c,33 :: 		}
+L_main4:
+;led_chaser.c,35 :: 		switch(count){
+	GOTO       L_main7
+;led_chaser.c,36 :: 		case 1:
+L_main9:
+;led_chaser.c,37 :: 		delayChanger(SLOW);
+	MOVLW      32
 	MOVWF      FARG_delayChanger_delay+0
-	MOVLW      2
+	MOVLW      3
 	MOVWF      FARG_delayChanger_delay+1
 	CALL       _delayChanger+0
-;led_chaser.c,34 :: 		break;
-	GOTO       L_main7
-;led_chaser.c,35 :: 		case 2 :
-L_main9:
-;led_chaser.c,36 :: 		delayChanger(MEDIUN);
+;led_chaser.c,38 :: 		break;
+	GOTO       L_main8
+;led_chaser.c,39 :: 		case 2 :
+L_main10:
+;led_chaser.c,40 :: 		delayChanger(MEDIUN);
 	MOVLW      44
 	MOVWF      FARG_delayChanger_delay+0
 	MOVLW      1
 	MOVWF      FARG_delayChanger_delay+1
 	CALL       _delayChanger+0
-;led_chaser.c,37 :: 		break;
-	GOTO       L_main7
-;led_chaser.c,38 :: 		case 3 :
-L_main10:
-;led_chaser.c,39 :: 		delayChanger(FAST);
+;led_chaser.c,41 :: 		break;
+	GOTO       L_main8
+;led_chaser.c,42 :: 		case 3 :
+L_main11:
+;led_chaser.c,43 :: 		delayChanger(FAST);
 	MOVLW      100
 	MOVWF      FARG_delayChanger_delay+0
 	MOVLW      0
 	MOVWF      FARG_delayChanger_delay+1
 	CALL       _delayChanger+0
-;led_chaser.c,40 :: 		break;
-	GOTO       L_main7
-;led_chaser.c,41 :: 		default :
-L_main11:
-;led_chaser.c,42 :: 		count = 1;
-	MOVLW      1
-	MOVWF      _count+0
-	MOVLW      0
-	MOVWF      _count+1
-;led_chaser.c,43 :: 		}
-	GOTO       L_main7
-L_main6:
-	MOVLW      0
-	XORWF      _count+1, 0
-	BTFSS      STATUS+0, 2
-	GOTO       L__main14
-	MOVLW      1
-	XORWF      _count+0, 0
-L__main14:
-	BTFSC      STATUS+0, 2
+;led_chaser.c,44 :: 		break;
 	GOTO       L_main8
+;led_chaser.c,45 :: 		default :
+L_main12:
+;led_chaser.c,46 :: 		count = 0;
+	CLRF       _count+0
+	CLRF       _count+1
+;led_chaser.c,47 :: 		}
+	GOTO       L_main8
+L_main7:
 	MOVLW      0
 	XORWF      _count+1, 0
 	BTFSS      STATUS+0, 2
 	GOTO       L__main15
-	MOVLW      2
+	MOVLW      1
 	XORWF      _count+0, 0
 L__main15:
 	BTFSC      STATUS+0, 2
@@ -139,16 +145,25 @@ L__main15:
 	XORWF      _count+1, 0
 	BTFSS      STATUS+0, 2
 	GOTO       L__main16
-	MOVLW      3
+	MOVLW      2
 	XORWF      _count+0, 0
 L__main16:
 	BTFSC      STATUS+0, 2
 	GOTO       L_main10
+	MOVLW      0
+	XORWF      _count+1, 0
+	BTFSS      STATUS+0, 2
+	GOTO       L__main17
+	MOVLW      3
+	XORWF      _count+0, 0
+L__main17:
+	BTFSC      STATUS+0, 2
 	GOTO       L_main11
-L_main7:
-;led_chaser.c,47 :: 		}while(1);
+	GOTO       L_main12
+L_main8:
+;led_chaser.c,51 :: 		}while(1);
 	GOTO       L_main1
-;led_chaser.c,50 :: 		}
+;led_chaser.c,54 :: 		}
 L_end_main:
 	GOTO       $+0
 ; end of _main

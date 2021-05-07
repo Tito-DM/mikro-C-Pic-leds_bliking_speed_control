@@ -1,7 +1,7 @@
 #define FAST 100
-#define SLOW 600
+#define SLOW 800
 #define MEDIUN 300
-int count = 1;
+int count = 0;
 
 void delayChanger(unsigned delay ){
    VDelay_ms(delay); // 300 mili sec delay
@@ -24,10 +24,14 @@ void main()
 
 do {
 // check if speed controller button have been pressed
-   if (PORTD.F7 == 0){
-     Delay_ms(1);  // delay for bouncing
-     count++;
+   if (Button(&PORTD,7,2,0)){
+     if (Button(&PORTD,7,2,0)){
+         count++;
+         Delay_us(50);
+     }
+
    }
+
    switch(count){
      case 1:
          delayChanger(SLOW);
@@ -39,7 +43,7 @@ do {
          delayChanger(FAST);
          break;
      default :
-      count = 1;
+      count = 0;
    }
 
 
